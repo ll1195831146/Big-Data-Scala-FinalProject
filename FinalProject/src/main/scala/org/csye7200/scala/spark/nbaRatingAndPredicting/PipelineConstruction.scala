@@ -4,10 +4,10 @@ import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
 
 object PipelineConstruction {
 
-//  val smoker_index: StringIndexer = new StringIndexer()
-//    .setInputCol("MVP")
-//    .setOutputCol("pre_MVP")
-//
+  val MVP_index: StringIndexer = new StringIndexer()
+    .setInputCol("MVP")
+    .setOutputCol("pre_MVP")
+
 
   // Create the feature columns
   val featureColumns: Array[String] = Array("bmi", "MVP", "pre_MVP")
