@@ -1,6 +1,6 @@
 package org.csye7200.scala.spark.nbaRatingAndPredicting
 
-//import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
+import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
 
 object PipelineConstruction {
 
