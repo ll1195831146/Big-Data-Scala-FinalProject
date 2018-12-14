@@ -87,7 +87,7 @@ object RandomForest extends App with SparkConfig{
 
       }
 
-      def Metrix(model: PipelineModel, data: DataFrame) = {
+      def Metrix(model: PipelineModel, data: DataFrame): Unit = {
 
         // Split the data into training and test sets (30% held out for testing).
         val Array(trainingData, testData) = data.randomSplit(Array(0.7, 0.3))
@@ -95,13 +95,8 @@ object RandomForest extends App with SparkConfig{
         // Make predictions.
         val predictions = model.transform(testData)
 
-        //  // Select example rows to display.
-        //  predictions.select("prediction", "label", "features").show(5)
-
-        predictions.createOrReplaceTempView("predictions")
-
-        // sc.sql("select * from predictions desc order by predictions").show(10)
-        predictions.select("Player", "prediction", "label", "features").orderBy(desc("prediction")) show (10)
+          // Select example rows to display.
+        predictions.select("prediction", "label", "features").show(5)
 
         val evaluator = new RegressionEvaluator()
           .setLabelCol("label")
@@ -112,26 +107,5 @@ object RandomForest extends App with SparkConfig{
 
         println("Root Mean Squared Error (RMSE) on test data = " + rmse)
       }
-
-
-
-
-
-  //println(predictions.count())
-
-  //  //Save Model
-  //  model.write.overwrite().save("target/tmp/Model")
-
-  // Select (prediction, true label) and compute test error.
-
-//  val evaluator = new RegressionEvaluator()
-//    .setLabelCol("label")
-//    .setPredictionCol("prediction")
-  ////    .setMetricName("rmse")
-  ////
-  ////  val rmse = evaluator.evaluate(predictions)
-//
-//  println("Root Mean Squared Error (RMSE) on test data = " + rmse)
-
 
 }
