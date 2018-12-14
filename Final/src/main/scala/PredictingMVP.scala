@@ -21,9 +21,11 @@ object PredictingMVP {
 
     //Prediction
     val pred_data = DataCleaning.loadDataset("data/17-18stats.csv")
-    val pred_data_indexed = DataCleaning.dataIndexed(pred_data)
+    val pred_data_threshhold = DataCleaning.threshhold(pred_data)
+    val pred_data_indexed = DataCleaning.dataIndexed(pred_data_threshhold)
 
     val pred_data_final = RandomForest.FeatureDataFrame(pred_data_indexed)
+
 
 
 
