@@ -47,10 +47,10 @@ object DataCleaning extends App with SparkConfig {
 
   //Every player must put up a PER of at least 18.5 in the season.
   //Every player need to get an average of at least 0.20 WS/48 in the season.
-  //Every player plays at least 1500 minutes in the season.
+  //Every player plays at least 2000 minutes in the season.
   def threshhold(data:DataFrame)={
     data.createOrReplaceTempView("data")
-    sc.sql("select * from data where MP >= 1500 and PER >= 18.5 and WS/48 > 0.2")
+    sc.sql("select * from data where MP >= 2000 and PER >= 18.5 and WS/48 > 0.2")
 
   }
 }

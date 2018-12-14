@@ -12,8 +12,10 @@ object PredictingMVP {
   def main(args: Array[String]):Unit = {
 
     val data = DataCleaning.loadDataset("data/00-17stats.csv")
-    val dataIndexed = DataCleaning.dataIndexed(data)
+    val data_threshhold = DataCleaning.threshhold(data)
+    val dataIndexed = DataCleaning.dataIndexed(data_threshhold)
     val train_data_final = RandomForest.FeatureDataFrame(dataIndexed)
+
     val rfmodel = RandomForest.RFModel(train_data_final)
 
     //Metrix--rmse
