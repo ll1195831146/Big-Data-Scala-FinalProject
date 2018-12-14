@@ -1,69 +1,56 @@
 
+import SparkConfig.SparkConfig
+import DataCleaning.DataCleaning
+import RFModel.RandomForest
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.ml.Pipeline
+import org.apache.spark.ml.{Pipeline, PipelineModel}
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.ml.regression.{RandomForestRegressionModel, RandomForestRegressor}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
 import org.apache.spark.ml.feature.VectorIndexer
 
-object PredictingMVP extends App with SparkConfig {
-  val rootLogger = Logger.getRootLogger().setLevel(Level.WARN)
+object PredictingMVP {
+  def main(args: Array[String]) = {
+    //
+    //
+    //    // loading the training data set
+    //    val trainDataset = DataCleaning.loadTrainDataset(hiveContext, args(0))
+    //
+    //    // loading the test data set
+    //    val Array(testRawdata, testDataset) = DataAggregatorUtil.loadTestDataset(hiveContext, args(1))
+    //
+    //    //  Preparing the Spark Random Forest Pipeline for using ML library
+    //    val randomForestTvs = RandomForest.prepareRandomForestPipeline()
+    //
+    //    //Preparing the Random Forest Model
+    //    val randomForestModel = RandomForest.prepareAndFitModel(randomForestTvs, trainDataset)
+    //
+    //    //Transforming the test data set according to the model
+    //    val randomForestOutput = randomForestModel.transform(testDataset)
+    //      .withColumnRenamed("prediction", "Sales")
+    //      .withColumnRenamed("Id", "PredId")
+    //      .select("PredId", "Sales")
+    //
+    //    SalesPredictionUsageUtil.savePredictions(randomForestOutput, testRawdata, SALES_PREDICTION_RESULT_CSV)
+    //
+    //  }
+    //Train Model
+    val data = DataCleaning.loadDataset("data/00-17stats.csv")
+    val dataIndexed = DataCleaning.dataIndexed(data)
+    val train_data_final = RandomForest.FeatureDataFrame(dataIndexed)
+    val rfmodel = RandomForest.RFModel(train_data_final)
 
-  val dataFrame = sc.read.format("CSV").option("header", "true").option("inferSchema", "true").load("data/17-18stats.csv")
+//    val evaluator = RandomForest.Metrix(model,dataIndexed)
+//    evaluator
 
-  val data_cleaned = dataFrame.na.drop()
-  //data_cleaned.show()
+    //Prediction
+    val pred_data = DataCleaning.loadDataset("data/17-18stats.csv")
+    val pred_data_indexed = DataCleaning.dataIndexed(pred_data)
 
-  val posIndexer = new StringIndexer()
-    .setInputCol("Pos")
-    .setOutputCol("posIndex")
+    val pred_data_final = RandomForest.FeatureDataFrame(pred_data_indexed)
 
-  val posIndexerDF = posIndexer.fit(data_cleaned).transform(data_cleaned)
-
-  val tmIndexer = new StringIndexer()
-    .setInputCol("Tm")
-    .setOutputCol("tmIndex")
-
-  val tmIndexerDF = tmIndexer.fit(posIndexerDF).transform(posIndexerDF)
-
-  tmIndexerDF.show()
-
-  val data_indexed = tmIndexerDF.drop("Pos", "Tm", "Player")
-
-  print("data_indexed")
-
-  data_indexed.show()
-
-  data_indexed.createOrReplaceTempView("data")
-
-  var featureDF = sc.sql("SELECT * FROM data")
-
-  println("featureDF:")
-  featureDF.show()
-
-  val colNames = featureDF.columns.drop(1)
-
-
-  val assembler = new VectorAssembler()
-    .setInputCols(colNames)
-    .setOutputCol("features")
-
-  val assembleDF = assembler.transform(featureDF)
-  println("assembleDF:")
-  assembleDF.show()
-
-  val finalDF = assembleDF.withColumnRenamed("Voting", "label")
-  println("finalDF:")
-  finalDF.show()
-
-  val featureIndexer = new VectorIndexer()
-    .setInputCol("features")
-    .setOutputCol("indexedFeatures")
-
-  val model = RandomForestRegressionModel.load("tmp/rf_model")
-
-  val predictions = model.transform(assembleDF.select("features"))
-  predictions.select("prediction", "label", "features").show(5)
-
+    // Make predictions.
+    val predictions = RandomForest.prediction(rfmodel, pred_data_final)
+  }
 }
