@@ -83,7 +83,7 @@ object RandomForest extends App with SparkConfig{
     }
       def prediction(model: PipelineModel, data: DataFrame): Unit ={
         val predictions = model.transform(data)
-        predictions.select("Player", "prediction", "label", "features").orderBy(desc("prediction")) show (10)
+        predictions.select("Player", "prediction").orderBy(desc("prediction")) show (10)
 
       }
 
