@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="HydraSettings">
-    <option name="hydraStorePath" value="D:\Big-Data-Scala-FinalProject\Final\.hydra\idea" />
-    <option name="noOfCores" value="4" />
-    <option name="projectRoot" value="D:\Big-Data-Scala-FinalProject\Final" />
-    <option name="sourcePartitioner" value="auto" />
-  </component>
-</project>
